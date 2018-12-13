@@ -1,0 +1,17 @@
+# Docker-compose script to run the Day02.js script in this directory
+#
+# Simply lunches a container with this containing directory mounted then
+# executes the script and quits.
+
+version: "3"
+services:
+  node:
+    #    image: "node:lts-alpine" -- Using experimental features of Node 10 so locking to that version in case there deprecated later
+    image: "node:10-alpine"
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+    - NODE_ENV=dev
+    volumes:
+    - ./:/home/node/app
+    command: "node Day03.js"
