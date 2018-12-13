@@ -1,7 +1,7 @@
 /**
  * Advent of Code 2018 - Day 2
  *
- *
+ * https://adventofcode.com/2018/day/2
  */
 
 const fs = require('fs').promises;
@@ -30,7 +30,89 @@ async function day2Task() {
 
     console.log(`Checksum resolved as: ${resultingCheckSum}`);
 
+
+    // Day 2 task part 2
+    let similarCodes = [];
+    let similarCodesMap = {};
+
+    for (let searchCode of boxIDsArray) {
+        // Need to compare current search code against all other codes
+        for (let comparisonCode of boxIDsArray) {
+            // Now need to find the IDs that are similar, they will vary by 1 character in the same position to be deemed similar
+            let foundInconsistencies = getInconsistencies(searchCode, comparisonCode );
+
+            // To be deemed as similar the codes should have only a single Inconsistency
+            if (foundInconsistencies.length === 1) {
+
+                // Check this is not already in the duplicates array
+                if (similarCodesMap[comparisonCode] !== searchCode) {
+                    // Add the similar codes to the similarCodes array
+                    similarCodes.push({codes: [searchCode, comparisonCode], 'inconsistencyAtIndex': foundInconsistencies[0].letterIndex});
+
+                    // Add an entry to the comparisonCodeMap so no duplicates (same pairing reversed) are added
+                    similarCodesMap[searchCode] = comparisonCode;
+
+                }
+            }
+        }
+    }
+
+    // Get the common letters between the codes
+    for (let similarCode of similarCodes) {
+        let code = similarCode.codes[0];
+
+        // This needs to be refactored so the conversion is not needed...
+        let slice2Start = parseInt(similarCode.inconsistencyAtIndex, 10) + 1;
+
+        let codeWithoutInconsistency = code.slice(0, similarCode.inconsistencyAtIndex) + code.slice(slice2Start, code.length);
+
+        // Print results to console
+        console.log(`Code Without Inconsistency: ${codeWithoutInconsistency}`);
+
+    }
+
+
+
 }
+
+
+/**
+ * getInconsistencies
+ *
+ * Gets an array containing inconsistencies between two codes
+ *
+ * @param code1     String code e.g: 'fghij'
+ * @param code2     String code e.g: 'fguij'
+ * @returns {Array} Array of Inconsistencies e.g: [ { letterIndex: '2', expectedLetter: 'h' } ]
+ */
+function getInconsistencies(code1, code2) {
+
+    // Array to hold found inconsistencies
+    let inconsistencies = [];
+
+    for (let letterIndex in code1) {
+
+        if(code1[letterIndex] !== code2[letterIndex]) {
+            // Push found inconsistency to array
+            inconsistencies.push({'letterIndex': letterIndex, 'expectedLetter' : code1[letterIndex]});
+
+        }
+    }
+
+    // If code 2 is longer than code 1 then all of the additional letters need to be added to the inconsistencies
+    if (code1.length < code2.length) {
+
+        for(let index = code1.length; index < code2.length; index++) {
+            inconsistencies.push({'letterIndex': index, 'expectedLetter': ''});
+
+        }
+    }
+
+
+    // return the array of all found inconsistencies between the supplied codes
+    return inconsistencies;
+}
+
 
 /**
  * calculateCheckSum
