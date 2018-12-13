@@ -59,10 +59,11 @@ async function day2Task() {
 
     // Get the common letters between the codes
     for (let similarCode of similarCodes) {
+        // This only supports 1 Inconsistency between the two codes
         let code = similarCode.codes[0];
 
-        // This needs to be refactored so the conversion is not needed...
-        let slice2Start = parseInt(similarCode.inconsistencyAtIndex, 10) + 1;
+        // Index after inconsistent character in string
+        let slice2Start = similarCode.inconsistencyAtIndex + 1;
 
         let codeWithoutInconsistency = code.slice(0, similarCode.inconsistencyAtIndex) + code.slice(slice2Start, code.length);
 
@@ -90,7 +91,7 @@ function getInconsistencies(code1, code2) {
     // Array to hold found inconsistencies
     let inconsistencies = [];
 
-    for (let letterIndex in code1) {
+    for (let letterIndex = 0, len = code1.length; letterIndex < len; letterIndex++) {
 
         if(code1[letterIndex] !== code2[letterIndex]) {
             // Push found inconsistency to array
