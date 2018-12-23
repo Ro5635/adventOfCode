@@ -10,6 +10,8 @@ const INPUT_TEXT_FILE = 'Day03Input.txt';
 
 // Set up the data structures to hold the claims and claims map
 let fabricAllocationMap = [];
+// All of the claims within the allocation map that are in conflict
+let claimsInConflict = new Map();                                       // NB: JS Perf with Map is a bit odd...
 
 day03();
 
@@ -57,6 +59,29 @@ async function day03() {
 
     console.log(`Number of found conflicts: ${claimConflicts}`);
 
+    // Need to now find the number of claims that have zero conflicts
+
+    // Step through each of the claims and check if it is in the claimsInConflict map, if it is not then it
+    // is not in conflict and can be added to the unconflictedClaims Array
+
+    // Array of un-conflicted claims
+    let unconflictedClaims = [];
+
+    for (let claim of claimsArray) {
+        let claimHasConflict = claimsInConflict.has(claim.claimID);
+
+        if (!claimHasConflict) {
+            unconflictedClaims.push(claim);
+
+        }
+    }
+
+    console.log('Un-conflicted Claims:');
+
+    for (let claim of unconflictedClaims) {
+        console.log(`   ${claim.claimID}`);
+    }
+
 
 }
 
@@ -97,22 +122,44 @@ function registerClaim(claim) {
      * @param positionY
      */
     function addClaimToPosition(claim, positionX, positionY) {
-        ensureDataStructureExists(positionX, positionY);
+        ensureFabricAllocationMapDataStructureExists(positionX, positionY);
 
         let claimPosition = fabricAllocationMap[positionX][positionY];
 
         // Add passed claim to claim list in claim position
         claimPosition.claimedByClaims.push(claim);
+
+        // Is there multiple claims to this position
+        if (claimPosition.claimedByClaims.length > 1) {
+            // Is this the first conflicting claim to be added to this position
+            if (claimPosition.claimedByClaims.length === 2) {
+
+                // This is the first conflict found in this position so both claims need adding to claimsInConflict
+                for (let claimInConflict of claimPosition.claimedByClaims) {
+                    claimsInConflict.set(claimInConflict.claimID, {});
+
+                }
+
+            } else {
+                // Add the additional conflict
+                claimsInConflict.set(claim.claimID, {});
+
+            }
+
+        }
+
     }
 
     /**
+     * ensureFabricAllocationMapDataStructureExists
+     *
      * Create supporting data structure for multi dimensional array
      * if it does not yet exist
      *
      * @param posX
      * @param posY
      */
-    function ensureDataStructureExists(posX, posY) {
+    function ensureFabricAllocationMapDataStructureExists(posX, posY) {
 
         if (!fabricAllocationMap[posX]) {
             fabricAllocationMap[posX] = [];
