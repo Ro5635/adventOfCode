@@ -1,6 +1,6 @@
 # Advent Of Code 2018
 
-My attempt at the code challenges on advent of code
+My attempt at the code challenges on [advent of code](https://adventofcode.com)
 
 to run one of the scripts go to the appropriate directory and run
 
