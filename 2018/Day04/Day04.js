@@ -5,6 +5,7 @@
  *
  * Rushed attempt at day 4, the generated solution was accepted!
  *
+ * Had a play around with using a generator with this
  *
  * Event Object
  *
